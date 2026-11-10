@@ -34,4 +34,3 @@ class Elf:
         if not self.ist_beschaeftigt():
             return 0
         return self.aktuelles_geschenk.benoetigte_zeit
-    
