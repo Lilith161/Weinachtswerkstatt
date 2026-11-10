@@ -1,20 +1,71 @@
-"elfen": [
+{
+    "elfen": [
     {
-    "id": "333",
-    "name": "placeholder1",
-    "fachgebiet": "werkstoffe"
-    }
-
+        "id": "333",
+        "name": "placeholder1",
+        "fachgebiet": "werkstoffe"
+    },
     {
-    "id": "666",
-    "name": "placeholder2",
-    "fachgebiet": "elektronik"
-    }
-
+        "id": "666",
+        "name": "placeholder2",
+        "fachgebiet": "elektronik"
+    },
     {
-    "id": "999",
-    "name": "placeholder3",
-    "fachgebiet": "textilien"
+        "id": "999",
+        "name": "placeholder3",
+        "fachgebiet": "textilien"
     }
-
-]
+    ],
+    "geschenke": [
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    },
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    },
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    },
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    },
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    },
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    },
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    },
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    },
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    },
+    {
+        "id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1"
+    }
+    ]
+}
