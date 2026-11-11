@@ -8,7 +8,7 @@
     {
         "elf_id": "666",
         "name": "Norden Alva",
-        "fachgebiet": "elektronik"
+        "fachgebiet": "technik"
     },
     {
         "elf_id": "999",
@@ -21,92 +21,107 @@
     {
         "geschenk_id": "1",
         "name": "GTA 6 physisch gerippt für PC",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "technik",
+        "fertigungszeit": "24 h",
+        "gewicht": "1,5 kg"
     },
     {
         "geschenk_id": "2",
         "name": "Die Todesscheibe von LEGO",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "werkstoffe",
+        "fertigungszeit": "13 h",
+        "gewicht": "0,5 kg"
     },
     {
         "geschenk_id": "3",
         "name": "2x LEGO Pyramidenhälften",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "werkstoffe",
+        "fertigungszeit": "16 h",
+        "gewicht": "0,8 kg"
     },
     {
         "geschenk_id": "4",
         "name": "Bildschirmspiel 1",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "technik",
+        "fertigungszeit": "8 h",
+        "gewicht": "0,3 kg"
     },
     {
         "geschenk_id": "5",
         "name": "Gejailbreakes iPhone 18 Pro Max",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "technik",
+        "fertigungszeit": "32 h",
+        "gewicht": "0,5 kg"
     },
     {
         "geschenk_id": "6",
         "name": "Hildegard Orgon Akkumulator",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "werkstoffe",
+        "fertigungszeit": "3 h",
+        "gewicht": "0,5 kg"
     },
     {
         "geschenk_id": "7",
         "name": "Ticket für ein Tag mit Susanne Daubner",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "sonstiges",
+        "fertigungszeit": "1 h",
+        "gewicht": "0,2 kg"
     },
     {
         "geschenk_id": "8",
         "name": "Stein der Berliner Mauer",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "werkstoffe",
+        "fertigungszeit": "5 h",
+        "gewicht": "1,0 kg"
     },
     {
         "geschenk_id": "9",
         "name": "Darwin Award",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "sonstiges",
+        "fertigungszeit": "1 h",
+        "gewicht": "0,1 kg"
     },
     {
         "geschenk_id": "10",
         "name": "Labubu",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "textilien",
+        "fertigungszeit": "20 h",
+        "gewicht": "0,5 kg"
     },
     {
         "geschenk_id": "11",
-        "name": "",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "name": "Karl's Diktatorcape",
+        "kategorie": "textilien",
+        "fertigungszeit": "9 h",
+        "gewicht": "0,5 kg"
     },
     {
         "geschenk_id": "12",
         "name": "eigener Dobby",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "sonstiges",
+        "fertigungszeit": "64 h",
+        "gewicht": "0,5 kg"
     },
     {
         "geschenk_id": "13",
         "name": "Personalausweis der 'Bundesrepublik Deutschland GmbH'",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "kategorie": "sonstiges",
+        "fertigungszeit": "41 h",
+        "gewicht": "0,5 kg"
     },
     {
         "geschenk_id": "14",
-        "name": "",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "name": "Trumps T-Mobile mit MAGA Merch",
+        "kategorie": "technik",
+        "fertigungszeit": "47 h",
+        "gewicht": "0,5 kg"
     },
     {
         "geschenk_id": "15",
-        "name": "geschenk1",
-        "kategorie": "Beschreibung1",
-        "fertigungszeit": "2 Tage"
+        "name": "XL Globus der flachen Erde",
+        "kategorie": "werkstoffe",
+        "fertigungszeit": "15 h",
+        "gewicht": "3,0 kg"
     }
     ]
 }
