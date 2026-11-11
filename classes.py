@@ -34,6 +34,10 @@ class Elf:
     def berechnung_bauzeit(self):
         if not self.ist_beschaeftigt():
             return 0
+
+        if self.fertigungszeit == self.aktuelles_geschenk.kategorie:
+            return self.aktuelles_geschenk.fertigungszeit - (self.aktuelles_geschenk.fertigungszeit / 4)
+            
         return self.aktuelles_geschenk.benoetigte_zeit
 
 
