@@ -1,71 +1,112 @@
 {
     "elfen": [
     {
-        "id": "333",
-        "name": "placeholder1",
+        "elf_id": "333",
+        "name": "Ziggy Frost",
         "fachgebiet": "werkstoffe"
     },
     {
-        "id": "666",
-        "name": "placeholder2",
+        "elf_id": "666",
+        "name": "Norden Alva",
         "fachgebiet": "elektronik"
     },
     {
-        "id": "999",
-        "name": "placeholder3",
+        "elf_id": "999",
+        "name": "Buddy McElfface",
         "fachgebiet": "textilien"
     }
+
     ],
     "geschenke": [
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     },
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     },
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     },
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     },
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     },
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     },
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     },
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     },
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     },
     {
-        "id": "111",
+        "geschenk_id": "111",
         "name": "geschenk1",
-        "kategorie": "Beschreibung1"
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
+    },
+    {
+        "geschenk_id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
+    },
+    {
+        "geschenk_id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
+    },
+    {
+        "geschenk_id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
+    },
+    {
+        "geschenk_id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
+    },
+    {
+        "geschenk_id": "111",
+        "name": "geschenk1",
+        "kategorie": "Beschreibung1",
+        "fertigungszeit": "2 Tage"
     }
     ]
 }
