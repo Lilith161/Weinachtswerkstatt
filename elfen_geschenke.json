@@ -30,21 +30,21 @@
         "name": "Die Todesscheibe von LEGO",
         "kategorie": "werkstoffe",
         "fertigungszeit": "13 h",
-        "gewicht": "0,5 kg"
+        "gewicht": "2,5 kg"
     },
     {
         "geschenk_id": "3",
         "name": "2x LEGO Pyramidenhälften",
         "kategorie": "werkstoffe",
         "fertigungszeit": "16 h",
-        "gewicht": "0,8 kg"
+        "gewicht": "3,0 kg"
     },
     {
         "geschenk_id": "4",
         "name": "Bildschirmspiel 1",
         "kategorie": "technik",
         "fertigungszeit": "8 h",
-        "gewicht": "0,3 kg"
+        "gewicht": "3,5 kg"
     },
     {
         "geschenk_id": "5",
@@ -58,7 +58,7 @@
         "name": "Hildegard Orgon Akkumulator",
         "kategorie": "werkstoffe",
         "fertigungszeit": "3 h",
-        "gewicht": "0,5 kg"
+        "gewicht": "1,5 kg"
     },
     {
         "geschenk_id": "7",
@@ -86,7 +86,7 @@
         "name": "Labubu",
         "kategorie": "textilien",
         "fertigungszeit": "20 h",
-        "gewicht": "0,5 kg"
+        "gewicht": "1,0 kg"
     },
     {
         "geschenk_id": "11",
@@ -97,24 +97,24 @@
     },
     {
         "geschenk_id": "12",
-        "name": "eigener Dobby",
+        "name": "Dobby mit der Socke",
         "kategorie": "sonstiges",
         "fertigungszeit": "64 h",
-        "gewicht": "0,5 kg"
+        "gewicht": "13,0 kg"
     },
     {
         "geschenk_id": "13",
         "name": "Personalausweis der 'Bundesrepublik Deutschland GmbH'",
         "kategorie": "sonstiges",
         "fertigungszeit": "41 h",
-        "gewicht": "0,5 kg"
+        "gewicht": "0,1 kg"
     },
     {
         "geschenk_id": "14",
         "name": "Trumps T-Mobile mit MAGA Merch",
         "kategorie": "technik",
         "fertigungszeit": "47 h",
-        "gewicht": "0,5 kg"
+        "gewicht": "1,5 kg"
     },
     {
         "geschenk_id": "15",
