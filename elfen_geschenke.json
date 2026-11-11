@@ -30,14 +30,14 @@
         "name": "Die Todesscheibe von LEGO",
         "kategorie": "werkstoffe",
         "fertigungszeit": "13 h",
-        "gewicht": "2,5 kg"
+        "gewicht": "14,0 kg"
     },
     {
         "geschenk_id": "3",
         "name": "2x LEGO Pyramidenhälften",
         "kategorie": "werkstoffe",
         "fertigungszeit": "16 h",
-        "gewicht": "3,0 kg"
+        "gewicht": "5,0 kg"
     },
     {
         "geschenk_id": "4",
@@ -48,7 +48,7 @@
     },
     {
         "geschenk_id": "5",
-        "name": "Gejailbreakes iPhone 18 Pro Max",
+        "name": "Gejailbreakes iPhone Duo mit Sollbruchstelle",
         "kategorie": "technik",
         "fertigungszeit": "32 h",
         "gewicht": "0,5 kg"
@@ -58,7 +58,7 @@
         "name": "Hildegard Orgon Akkumulator",
         "kategorie": "werkstoffe",
         "fertigungszeit": "3 h",
-        "gewicht": "1,5 kg"
+        "gewicht": "12,5 kg"
     },
     {
         "geschenk_id": "7",
@@ -72,7 +72,7 @@
         "name": "Stein der Berliner Mauer",
         "kategorie": "werkstoffe",
         "fertigungszeit": "5 h",
-        "gewicht": "1,0 kg"
+        "gewicht": "2,5 kg"
     },
     {
         "geschenk_id": "9",
@@ -100,7 +100,7 @@
         "name": "Dobby mit der Socke",
         "kategorie": "sonstiges",
         "fertigungszeit": "64 h",
-        "gewicht": "13,0 kg"
+        "gewicht": "8,0 kg"
     },
     {
         "geschenk_id": "13",
@@ -111,14 +111,14 @@
     },
     {
         "geschenk_id": "14",
-        "name": "Trumps T-Mobile mit MAGA Merch",
+        "name": " Trump Mobile mit MAGA Merch",
         "kategorie": "technik",
         "fertigungszeit": "47 h",
         "gewicht": "1,5 kg"
     },
     {
         "geschenk_id": "15",
-        "name": "XL Globus der flachen Erde",
+        "name": "XL Globus der flachen Erde mit Eiswand",
         "kategorie": "werkstoffe",
         "fertigungszeit": "15 h",
         "gewicht": "3,0 kg"
