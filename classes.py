@@ -1,12 +1,12 @@
 class Geschenk:
-    def __init__(self, geschenk_id, name, gewicht, kategorie, geschenk_status, zugewiesener_elf, benoetigte_zeit):
+    def __init__(self, geschenk_id, name, gewicht, kategorie, geschenk_status, zugewiesener_elf, fertigungszeit):
         self.geschenk_id = geschenk_id
         self.name = name
         self.gewicht = gewicht
         self.kategorie = kategorie
         self.geschenk_status = geschenk_status
         self.zugewiesener_elf = zugewiesener_elf
-        self.benoetigte_zeit = benoetigte_zeit
+        self.fertigungszeit = fertigungszeit
 
     def geschenk_zuweisung(self, zugewiesener_elf):
         self.zugewiesener_elf = zugewiesener_elf
@@ -34,11 +34,11 @@ class Elf:
     def berechnung_bauzeit(self):
         if not self.ist_beschaeftigt():
             return 0
-
-        if self.fertigungszeit == self.aktuelles_geschenk.kategorie:
+        
+        if self.fachgebiet == self.aktuelles_geschenk.kategorie:
             return self.aktuelles_geschenk.fertigungszeit - (self.aktuelles_geschenk.fertigungszeit / 4)
             
-        return self.aktuelles_geschenk.benoetigte_zeit
+        return self.aktuelles_geschenk.fertigungszeit
 
 
 class Schlitten:
