@@ -26,6 +26,12 @@ def hole_kalender_datum(tag):
     wochentag_idx = calendar.weekday(2026, 12, tag)
     return f"{wochentage[wochentag_idx]}, {tag}. Dezember 2026"
 
+def get_weekday_by_date(tag):
+    """Gibt das formatierte Datum für den Dezember 2026 zurück."""
+    wochentage = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
+    wochentag_idx = calendar.weekday(2026, 12, tag)
+    return wochentage[wochentag_idx]
+
 def simuliere_tagesablauf(spiel):
     """Führt einen Tagesschritt aus: Elfen arbeiten, verpacken und laden."""
     arbeitsstunden_pro_tag = 8.0  # 8 Stunden Schicht pro Tag
@@ -83,6 +89,7 @@ def simuliere_tagesablauf(spiel):
                 g.aktualisiere_geschenk_status("ausgeliefert")
             spiel.schlitten.starte_auslieferung()
 
+
 def main():
     # JSON-Daten laden
     daten = hole_daten = lade_daten_aus_json("elfen_geschenke.json")
@@ -90,7 +97,7 @@ def main():
     # Elfen initialisieren (mit classes.Elf)
     elfen = []
     for e_data in daten["elfen"]:
-        elf = classes.Elf(
+        elf = classes.elf(
             elf_id=e_data["elf_id"],
             name=e_data["name"],
             fachgebiet=e_data["fachgebiet"].lower(),
@@ -106,7 +113,7 @@ def main():
     
     geschenke = []
     for g_data in ausgewaehlte_roh:
-        geschenk = classes.Geschenk(
+        geschenk = classes.geschenk(
             geschenk_id=int(g_data["geschenk_id"]),
             name=g_data["name"],
             gewicht=parse_gewicht(g_data["gewicht"]),
@@ -118,9 +125,9 @@ def main():
         geschenke.append(geschenk)
         
     # Schlitten und Spielinstanz erstellen
-    schlitten = classes.Schlitten(max_gewicht=35.0, aktuelles_gewicht=0.0, geladene_geschenke=[])
+    schlitten = classes.schlitten(max_gewicht=20.0, aktuelles_gewicht=0.0, geladene_geschenke=[])
     
-    spiel = classes.Spiel(
+    spiel = classes.spiel(
         aktueller_tag=1,
         max_tag=24,
         geschenke=geschenke,
@@ -134,24 +141,37 @@ def main():
     print(f"Spiel gestartet! Tag {spiel.aktueller_tag} von {spiel.max_tag}.\n")
 
     # Hauptschleife über die Spieltage (1 bis 24)
+    # array table contents [array cont1[], array cont2]
     while spiel.spielstatus not in ["beendet", "Gewonnen"]:
-        print(f"=== {hole_kalender_datum(spiel.aktueller_tag)} ===")
-        simuliere_tagesablauf(spiel)
+        if get_weekday_by_date(spiel.aktueller_tag) == "Samstag" or get_weekday_by_date(spiel.aktueller_tag) == "Sonntag":
+            print(f"\n=== {hole_kalender_datum(spiel.aktueller_tag)} ===\nEs ist Wochenende!\n")
+            spiel.aktueller_tag += 1
+            time.sleep(1.0)
+        else:
+            print(f"=== {hole_kalender_datum(spiel.aktueller_tag)} ===")
+            simuliere_tagesablauf(spiel)
 
-        # Siegprüfung: Alle Geschenke ausgeliefert
-        if all(g.geschenk_status == "ausgeliefert" for g in spiel.geschenke):
-            spiel.spielstatus = "Gewonnen"
-            print(f"\nGEWONNEN! Alle Geschenke wurden bis zum {hole_kalender_datum(spiel.aktueller_tag)} ausgeliefert.")
-            break
+            # Siegprüfung: Alle Geschenke ausgeliefert
+            if all(g.geschenk_status == "ausgeliefert" for g in spiel.geschenke):
+                spiel.spielstatus = "Gewonnen"
+                print(f"\nGEWONNEN! Alle Geschenke wurden bis zum {hole_kalender_datum(spiel.aktueller_tag)} ausgeliefert.")
+                break
 
-        # Niederlagenprüfung: Maximale Tage erreicht
-        if spiel.aktueller_tag >= spiel.max_tag:
-            spiel.spielstatus = "beendet"
-            print("\nZEIT ABGELAUFEN: Nicht alle Geschenke konnten rechtzeitig ausgeliefert werden.")
-            break
+            # Niederlagenprüfung: Maximale Tage erreicht
+            if spiel.aktueller_tag >= spiel.max_tag:
+                spiel.spielstatus = "beendet"
+                print("\nZEIT ABGELAUFEN: Nicht alle Geschenke konnten rechtzeitig ausgeliefert werden.")
+                break
 
-        spiel.aktueller_tag += 1
-        time.sleep(1.0)
+            # content array add []
+            spiel.aktueller_tag += 1
+            time.sleep(1.0)
 
+    #auserhalb der while schleife
+    # x = Prettytable
+    # x.fieldnames = [...]
+    # foreach cont_array
+    #   x.add_row(foreach_obj)
+    # print(x)
 if __name__ == "__main__":
     main()
