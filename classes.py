@@ -70,7 +70,7 @@ class Schlitten:
             return False
         
 
-class Spiel:
+class spiel:
     def __init__(self, aktueller_tag, max_tag, geschenke, elfen, schlitten, spielstatus):
         self.aktueller_tag = aktueller_tag
         self.max_tag = max_tag
