@@ -89,7 +89,7 @@ def main():
     # Geschenke initialisieren (alle 15 aus der JSON)
     geschenke = []
     for g_data in daten["geschenke"]:
-        geschenk = Geschenk(
+        geschenk = geschenk(
             geschenk_id=int(g_data["geschenk_id"]),
             name=g_data["name"],
             gewicht=parse_gewicht(g_data["gewicht"]),
