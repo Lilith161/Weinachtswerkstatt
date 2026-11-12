@@ -1,4 +1,4 @@
-class Geschenk:
+class geschenk:
     def __init__(self, geschenk_id, name, gewicht, kategorie, geschenk_status, zugewiesener_elf, fertigungszeit):
         self.geschenk_id = geschenk_id
         self.name = name
@@ -16,7 +16,7 @@ class Geschenk:
         self.geschenk_status = neuer_status
 
 
-class Elf:
+class elf:
     def __init__(self, elf_id, name, fachgebiet, anzahl_produzierter_geschenke, aktuelles_geschenk, elf_status):
         self.elf_id = elf_id
         self.name = name 
@@ -41,7 +41,7 @@ class Elf:
         return self.aktuelles_geschenk.fertigungszeit
 
 
-class Schlitten:
+class schlitten:
     def __init__(self, max_gewicht, aktuelles_gewicht, geladene_geschenke):
         self.max_gewicht = max_gewicht
         self.aktuelles_gewicht = aktuelles_gewicht
@@ -70,7 +70,7 @@ class Schlitten:
             return False
         
 
-class Spiel:
+class spiel:
     def __init__(self, aktueller_tag, max_tag, geschenke, elfen, schlitten, spielstatus):
         self.aktueller_tag = aktueller_tag
         self.max_tag = max_tag
