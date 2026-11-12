@@ -1,4 +1,4 @@
-class Geschenk:
+class geschenk:
     def __init__(self, geschenk_id, name, gewicht, kategorie, geschenk_status, zugewiesener_elf, fertigungszeit):
         self.geschenk_id = geschenk_id
         self.name = name
@@ -16,7 +16,7 @@ class Geschenk:
         self.geschenk_status = neuer_status
 
 
-class Elf:
+class elf:
     def __init__(self, elf_id, name, fachgebiet, anzahl_produzierter_geschenke, aktuelles_geschenk, elf_status):
         self.elf_id = elf_id
         self.name = name 
