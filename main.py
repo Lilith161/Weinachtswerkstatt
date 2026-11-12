@@ -48,7 +48,7 @@ if __name__ == "__main__":
         max_tag=24,
         geschenke=alle_geschenke,
         elfen=alle_elfen,
-        schlitten=mein_schlitten,
+        schlitten=santas_schlitten,
         spielstatus="gestartet"
     )
     
