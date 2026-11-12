@@ -30,7 +30,7 @@ class Elf:
 
     def aktualisiere_elf_status(self, neuer_status):
         self.elf_status = neuer_status
-
+ 
     def berechnung_bauzeit(self):
         if not self.ist_beschaeftigt():
             return 0
