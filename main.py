@@ -5,48 +5,53 @@ import calendar
 import classes
 
 def lade_daten_aus_json(dateipfad):
+    """Lädt Elfen- und Geschenkedaten aus einer JSON-Datei."""
     with open(dateipfad, "r", encoding="utf-8") as f:
         daten = json.load(f)
     return daten
 
-
 def parse_gewicht(gewicht_str):
+    """Wandelt einen String wie '2.5kg' oder '1,5 kg' in ein Float um."""
     rein = gewicht_str.lower().replace("kg", "").strip().replace(",", ".")
     return float(rein)
 
 def parse_zeit(zeit_str):
+    """Wandelt einen String wie '24h' oder '13 h' in ein Float um."""
     rein = zeit_str.lower().replace("h", "").strip().replace(",", ".")
     return float(rein)
-    
 
 def hole_kalender_datum(tag):
+    """Gibt das formatierte Datum für den Dezember 2026 zurück."""
     wochentage = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
     wochentag_idx = calendar.weekday(2026, 12, tag)
     return f"{wochentage[wochentag_idx]}, {tag}. Dezember 2026"
 
 def simuliere_tagesablauf(spiel):
-    """Führt einen Tagesschritt aus und greift sauber auf das spiel-Objekt zu."""
-    
-    # 1. Freien Elfen Geschenke zuweisen
+    """Führt einen Tagesschritt aus: Elfen arbeiten, verpacken und laden."""
+    arbeitsstunden_pro_tag = 8.0  # 8 Stunden Schicht pro Tag
+
+    # 1. Freien Elfen neue Geschenke zuweisen
     for elf in spiel.elfen:
         if not elf.ist_beschaeftigt():
-            # Finde ein unzugewiesenes Geschenk
-            freies_geschenk = next((g for g in spiel.geschenke if g.geschenk_status == "nicht zugewiesen"), None)
-            if freies_geschenk:
+            freies_geschenk = next(
+                (g for g in spiel.geschenke if g.geschenk_status == "nicht zugewiesen"),
+                None
+            )
+            if freies_geschenk is not None:
                 elf.aktuelles_geschenk = freies_geschenk
-                freies_geschenk.geschenk_zuweisung(elf) # Übergibt das Elf-Objekt
+                freies_geschenk.geschenk_zuweisung(elf)  # Übergibt das Elf-Objekt
                 
                 # Bauzeit berechnen (inkl. Fachgebiets-Bonus)
                 angepasste_zeit = elf.berechnung_bauzeit()
                 freies_geschenk.fertigungszeit = angepasste_zeit
+                freies_geschenk.aktualisiere_geschenk_status("in Produktion")
                 elf.aktualisiere_elf_status(f"Baut {freies_geschenk.name}")
 
-    # 2. Elfen arbeiten an Geschenken (8 Stunden Schicht)
-    arbeitsstunden = 8.0
+    # 2. Elfen arbeiten an ihren Geschenken
     for elf in spiel.elfen:
         if elf.ist_beschaeftigt():
             g = elf.aktuelles_geschenk
-            g.fertigungszeit -= arbeitsstunden # Reduziert die Bauzeit um die Arbeitsstunden
+            g.fertigungszeit -= arbeitsstunden_pro_tag
             
             if g.fertigungszeit <= 0:
                 g.fertigungszeit = 0
@@ -61,22 +66,31 @@ def simuliere_tagesablauf(spiel):
             if spiel.schlitten.lade_geschenk(g):
                 g.aktualisiere_geschenk_status("verladen")
 
-    # 4. Auslieferung prüfen (z.B. wenn Schlitten voll ist oder am Ende)
-    noch_in_arbeit = any(g.geschenk_status in ["nicht zugewiesen", "zugewiesen", "In Produktion"] for g in spiel.geschenke)
+    # 4. Auslieferung prüfen (z. B. wenn Schlitten voll ist, am Ende oder keine Arbeit mehr da ist)
+    noch_in_arbeit = any(
+        g.geschenk_status in ["nicht zugewiesen", "zugewiesen", "in Produktion"]
+        for g in spiel.geschenke
+    )
 
-    if len(spiel.schlitten.geladene_geschenke) > 0:
-        if not noch_in_arbeit or spiel.aktueller_tag == spiel.max_tag or spiel.schlitten.aktuelles_gewicht >= spiel.schlitten.max_gewicht:
+    if spiel.schlitten.geladene_geschenke:
+        if (
+            not noch_in_arbeit
+            or spiel.aktueller_tag == spiel.max_tag
+            or spiel.schlitten.aktuelles_gewicht >= spiel.schlitten.max_gewicht
+            or len(spiel.schlitten.geladene_geschenke) >= 5
+        ):
             for g in spiel.schlitten.geladene_geschenke:
                 g.aktualisiere_geschenk_status("ausgeliefert")
             spiel.schlitten.starte_auslieferung()
 
 def main():
-    daten = lade_daten_aus_json("elfen_geschenke.json")
+    # JSON-Daten laden
+    daten = hole_daten = lade_daten_aus_json("elfen_geschenke.json")
     
-    # Elfen initialisieren
+    # Elfen initialisieren (mit classes.Elf)
     elfen = []
     for e_data in daten["elfen"]:
-        elf = elf(
+        elf = classes.Elf(
             elf_id=e_data["elf_id"],
             name=e_data["name"],
             fachgebiet=e_data["fachgebiet"].lower(),
@@ -86,10 +100,13 @@ def main():
         )
         elfen.append(elf)
         
-    # Geschenke initialisieren (alle 15 aus der JSON)
+    # Geschenke initialisieren (wahlweise alle oder per random.sample)
+    geschenke_roh = daten["geschenke"]
+    ausgewaehlte_roh = random.sample(geschenke_roh, min(15, len(geschenke_roh)))
+    
     geschenke = []
-    for g_data in daten["geschenke"]:
-        geschenk = geschenk(
+    for g_data in ausgewaehlte_roh:
+        geschenk = classes.Geschenk(
             geschenk_id=int(g_data["geschenk_id"]),
             name=g_data["name"],
             gewicht=parse_gewicht(g_data["gewicht"]),
@@ -100,9 +117,10 @@ def main():
         )
         geschenke.append(geschenk)
         
-    schlitten = schlitten(max_gewicht=35.0, aktuelles_gewicht=0.0, geladene_geschenke=[])
+    # Schlitten und Spielinstanz erstellen
+    schlitten = classes.Schlitten(max_gewicht=35.0, aktuelles_gewicht=0.0, geladene_geschenke=[])
     
-    spiel = spiel(
+    spiel = classes.Spiel(
         aktueller_tag=1,
         max_tag=24,
         geschenke=geschenke,
@@ -113,20 +131,20 @@ def main():
     spiel.initialisiere_spiel()
     
     print("--- SANTA'S WEIHNACHTSWERKSTATT-MANAGER ---")
-    print(f"Spiel gestartet! Tag {spiel.aktueller_tag} von {spiel.max_tag}.")
+    print(f"Spiel gestartet! Tag {spiel.aktueller_tag} von {spiel.max_tag}.\n")
 
-    # Beispielhafter Ablauf über die Spieltage
+    # Hauptschleife über die Spieltage (1 bis 24)
     while spiel.spielstatus not in ["beendet", "Gewonnen"]:
-        print(f"\n--- {hole_kalender_datum(spiel.aktueller_tag)} ---")
+        print(f"=== {hole_kalender_datum(spiel.aktueller_tag)} ===")
         simuliere_tagesablauf(spiel)
 
-        # Siegprüfung
+        # Siegprüfung: Alle Geschenke ausgeliefert
         if all(g.geschenk_status == "ausgeliefert" for g in spiel.geschenke):
             spiel.spielstatus = "Gewonnen"
-            print(f"\nGewonnen! Alle Geschenke wurden bis zum {hole_kalender_datum(spiel.aktueller_tag)} ausgeliefert.")
+            print(f"\nGEWONNEN! Alle Geschenke wurden bis zum {hole_kalender_datum(spiel.aktueller_tag)} ausgeliefert.")
             break
 
-        # Niederlagenprüfung
+        # Niederlagenprüfung: Maximale Tage erreicht
         if spiel.aktueller_tag >= spiel.max_tag:
             spiel.spielstatus = "beendet"
             print("\nZEIT ABGELAUFEN: Nicht alle Geschenke konnten rechtzeitig ausgeliefert werden.")
