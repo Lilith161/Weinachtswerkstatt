@@ -112,3 +112,4 @@ class spiel:
         while self.spielstatus == "Schnelldurchlauf":
             if self.pruefe_spielende():
                 break
+            
