@@ -30,7 +30,9 @@ class spiel:
 def simuliere_tagesablauf(spiel):
     arbeitsstunden_pro_tag = 8.0
 
-    # Prüfung Krankheit
+# Prüft ob ein Elf an aktuellen tag schon karnk ist
+    elf_bereits_krank_diesn-tag = False
+    # Elfen krankheit
     for elf in spiel.elfen:
         # Wenn elf schon krank ist zählt zeit runter
         if elf.krankheits_tage_rest > 0:
@@ -40,8 +42,13 @@ def simuliere_tagesablauf(spiel):
                 print(f"\n [GESUND] {elf.name} ist wieder gesund und bereit für die arbeit")
             continue
 
-        # Wahrscheinlichkeit, dass der Elf krank wird (10%)
-        if random.random() < 0.10:
+
+    if not elf_bereits_krank_diesen_tag:
+
+        # Wahrscheinlichkeit, dass der Elf krank wird (15%)
+        if random.random() < 0.15:
+            elf_bereits_krank_diesen_tag = True     # Verhidnert das mehrere Elfen an einem tag krank sein können
+
             # Wahrscheinlichkeit, wie lange der Elf krank ist
             dauer_roll = random.random()
             ausfall_tage = 1
