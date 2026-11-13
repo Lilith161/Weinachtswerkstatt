@@ -1,0 +1,45 @@
+FUNKTION zeige_benutzeroberfläche(spiel_instanz):
+    
+    1. Bildschirmausgabe bereinigen (optional, um Flackern zu verhindern oder alte Logs nach oben zu schieben)
+    
+    2. DRUCKE Kopfrahmen:
+       - Rahmensymbol-Linie
+       - Titel: "SANTA'S WEIHNACHTSWERKSTATT-MANAGER 2026"
+       - Aktueller Spieltag und Systemstatus
+       
+    3. DRUCKE Wunschlisten-Tabelle:
+       - Tabellenkopf: ID | Wunschliste | Gewicht | Kategorie | Status | Elf
+       - FÜR JEDES geschenk IN spiel_instanz.geschenke:
+           Formatiere und drucke Zeile mit festen Spaltenbreiten 
+           (Nutze Platzhalter "-" falls kein Elf zugewiesen ist)
+           
+    4. DRUCKE Elfen-Tabelle:
+       - Tabellenkopf: Elf-Name | Fachgebiet | Status | Fertig
+       - FÜR JEDEN elf IN spiel_instanz.elfen:
+           Formatiere und drucke Zeile mit Name, Fachgebiet, aktuellem Status und anzahl_produzierter_geschenke
+           
+    5. DRUCKE Schlitten-Status:
+       - Box mit spiel_instanz.schlitten.aktuelles_gewicht, max_gewicht und Anzahl der geladenen Geschenke
+       
+    6. DRUCKE Steuerungsleiste:
+       - "[STEUERUNG] (1) Weiter/Start | (2) Pause | (3) Schnelldurchlauf | (4) Beenden"
+
+
+
+
+
+LOGIK-FLOW FÜR WOCHENENDE UND ECHTZEIT-TAKTUNG:
+
+1. Innerhalb der Hauptschleife (Game-Loop) oder am Start des Tagesschritts:
+   a. Rufe die Wochentag-Bestimmung für den aktuellen Tag auf (calendar.weekday).
+   
+   b. PRÜFE ob der Wochentag == 5 (Samstag) ODER Wochentag == 6 (Sonntag ist):
+      - WENN JA (Wochenende):
+        * Gib eine Meldung aus (z.B. "Wochenende! Die Elfen machen Pause.").
+        * Überspringe die Arbeitsstunden-Berechnung für diesen Tag (keine Reduktion der Fertigungszeit).
+      - WENN NEIN (Werktag):
+        * Führe den regulären Tagesablauf mit der Reduzierung der Fertigungszeiten durch.
+
+2. Am Ende des Tagesschritts (vor dem Hochzählen des Tages):
+   a. Rufe die Verzögerungsfunktion auf: time.sleep(60.0)
+   b. Das Programm pausiert nun exakt eine Minute, bevor der nächste Tag berechnet wird.
