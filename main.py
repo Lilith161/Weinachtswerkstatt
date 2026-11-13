@@ -3,7 +3,7 @@ import random
 import time
 import threading
 import calendar
-from classes import Geschenk, Elf, Schlitten, Spiel
+import classes
 
 def lade_daten_aus_json(dateipfad):
 # laden der Elfen, geschenke 
@@ -34,7 +34,7 @@ def main():
 # Elfen initialisieren
     elfen = []
     for e_data in daten["elfen"]:
-        elf = Elf(
+        elf = elf(
             elf_id=e_data["elf_id"],
             name=e_data["name"],
             fachgebiet=e_data["fachgebiet"].lower(),
@@ -56,7 +56,7 @@ def main():
         fertigungszeit = parse_zeit(g_data["fertigungszeit"])
         gewicht = parse_gewicht(g_data["gewicht"])
         
-        geschenk = Geschenk(
+        geschenk = geschenk(
             geschenk_id=g_id,
             name=name,
             gewicht=gewicht,
@@ -68,10 +68,10 @@ def main():
         geschenke.append(geschenk)
         
 # Schlitten erstellen max Gewicht 20kg
-    schlitten = Schlitten(max_gewicht=35.0, aktuelles_gewicht=0.0, geladene_geschenke=[])
+    schlitten = schlitten(max_gewicht=20.0, aktuelles_gewicht=0.0, geladene_geschenke=[])
     
 # Spiel-Instanz erstellen 
-    spiel = Spiel(
+    spiel = spiel(
         aktueller_tag=1,
         max_tag=24,
         geschenke=geschenke,
