@@ -89,7 +89,6 @@ def simuliere_tagesablauf(spiel):
                 g.aktualisiere_geschenk_status("ausgeliefert")
             spiel.schlitten.starte_auslieferung()
 
-
 def main():
     # JSON-Daten laden
     daten = hole_daten = lade_daten_aus_json("elfen_geschenke.json")
@@ -143,19 +142,14 @@ def main():
     # Hauptschleife über die Spieltage (1 bis 24)
     # array table contents [array cont1[], array cont2]
     while spiel.spielstatus not in ["beendet", "Gewonnen"]:
-        if get_weekday_by_date(spiel.aktueller_tag) == "Samstag" or get_weekday_by_date(spiel.aktueller_tag) == "Sonntag":
-            print(f"\n=== {hole_kalender_datum(spiel.aktueller_tag)} ===\nEs ist Wochenende!\n")
-            spiel.aktueller_tag += 1
-            time.sleep(1.0)
-        else:
-            print(f"=== {hole_kalender_datum(spiel.aktueller_tag)} ===")
-            simuliere_tagesablauf(spiel)
+        # UI anzeigen
+        zeige_benutzeroberfläche(spiel)
 
-            # Siegprüfung: Alle Geschenke ausgeliefert
-            if all(g.geschenk_status == "ausgeliefert" for g in spiel.geschenke):
-                spiel.spielstatus = "Gewonnen"
-                print(f"\nGEWONNEN! Alle Geschenke wurden bis zum {hole_kalender_datum(spiel.aktueller_tag)} ausgeliefert.")
-                break
+        # Siegprüfung
+        if all(g.geschenk_status == "ausgeliefert" for g in spiel.geschenke):
+            spiel.spielstatus = "Gewonnen"
+            print(f"\nGEWONNEN! Alle Geschenke wurden bis zum {hole_kalender_datum(spiel.aktueller_tag)} ausgeliefert.")
+            break
 
             # Niederlagenprüfung: Maximale Tage erreicht
             if spiel.aktueller_tag >= spiel.max_tag:
