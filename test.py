@@ -104,35 +104,37 @@ def simuliere_tagesablauf(spiel):
             spiel.schlitten.starte_auslieferung()
 
             # chancen auf ein zweiten strafzettel
-            if spiel.strafzettel_tag is None and random.random() < 0.25:
-                vergangene_tage = spiel.aktueller_tag
+    if spiel.strafzettel_tag is not None and spiel.strafzettel_ignoriert:
+        vergangene_tage = spiel.aktueller_tag - spiel.strafzettel_tag
 
-            if vergangene_tage == 1:
-                print(f"\n Polizei bittet den Weihnachtsmann, den Strafzettel zu zahlen.")
+        if vergangene_tage == 1:
+            print(f"\n Polizei bittet den Weihnachtsmann, den Strafzettel zu zahlen...")
             if random.choice([True, False]):
-                print("💸 Er zahlt. Alles erledigt!")
+                print("Er zahlt. Alles erledigt!")
                 spiel.strafzettel_tag = None
                 spiel.strafzettel_ignoriert = False
             else:
-                print(" Er weigert sich zu zahlen und flüchtet!")
+                print("Er weigert sich zu zahlen!")
+    
+        elif vergangene_tage >= 2:
+            erwischt = random.choice([True, False])
+            
+            if erwischt:
+                # Je nachdem wie viele Tage vergangen sind, gibt es unterschiedlich lange U-Haft
+                        # 2 tage
+                if vergangene_tage == 2:
+                    print(f"\n der Weihnachtsmann wurde von der Polizei erwischt und ist in Haft gelandet für 16 Stunden")
+                    spiel.u_haft_stunden_rest = 16.0
+                        # 3 tage
+                elif vergangene_tage == 3:
+                    print(f"\n der Weihnachtsmann wurde von der Polizei erwischt und ist in Haft gelandet für 2 Tage")
+                    spiel.u_haft_stunden_rest = 24.0
+                else:   # 4 oder mehr Tage
+                    print(f"\n der Weihnachtsmann wurde von der Polizei erwischt und ist in Haft gelandet für 2 Tage 8 stunden")
+                    spiel.u_haft_stunden_rest = 32.0
                 
-        elif vergangene_tage == 2:
-            # Wenn er nach 2 Tagen erwischt wird
-            print(f"\n Der Weihnachtsmann wird von der Polizei erwischt und Kommt für 16 stunden in Haft!")
-            spiel.u_haft_stunden_rest = 16.0  
-            spiel.strafzettel_tag = None
-            spiel.strafzettel_ignoriert = False
-
-        elif vergangene_tage == 3:
-            # Wenn er nach 3 Tagen erwischt wird
-            print(f"\n Der Weihnachtsmann wird von der Polizei erwischt und Kommt für 24 stunden in Haft!")
-            spiel.u_haft_stunden_rest = 24.0  
-            spiel.strafzettel_tag = None
-            spiel.strafzettel_ignoriert = False
-
-        elif vergangene_tage >= 4:
-            # Wenn es 4 oder mehr Tage her ist
-            print(f"\n Der Weihnachtsmann wird von der Polizei erwischt und Kommt für 32 stunden in Haft!")
-            spiel.u_haft_stunden_rest = 32.0
-            spiel.strafzettel_tag = None
-            spiel.strafzettel_ignoriert = False
+                # Strafzettel ist damit beglichen/abgegolten
+                spiel.strafzettel_tag = None
+                spiel.strafzettel_ignoriert = False
+            else:
+                print(f"\n Glück gehabt Der Weihnachtsmann nicht erwischt dafür steigt aber die Konsequenz wenn er erwischt wird")
