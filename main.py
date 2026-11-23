@@ -6,6 +6,10 @@ import threading
 import classes
 from prettytable import PrettyTable
 import msvcrt
+import keyboard
+import os
+
+lock = threading.Lock()
 
 def lade_daten_aus_json(dateipfad):
     """Lädt Elfen- und Geschenkedaten aus einer JSON-Datei."""
@@ -146,18 +150,20 @@ def simuliere_tagesablauf(spiel):
             spiel.schlitten.starte_auslieferung()
 
 def automatischer_ablauf(spiel):
+    global modus
     """Hintergrund-Thread, der die Simulation abhängig vom Status steuert (Normal, Schnell, Pause)."""
     while spiel.spielstatus not in ["beendet", "Gewonnen"]:
         
         # Wenn pausiert, wird die Zeit eingefroren (Warte-Schleife)
-        if spiel.spielstatus == "pausiert":
-            time.sleep(0.5)
-            continue
+        with lock:
+            if spiel.spielstatus == "pausiert":
+                time.sleep(0.5)
+                continue
 
         # Wochentag prüfen
         wochentag = get_weekday_by_date(spiel.aktueller_tag)
         if wochentag in ["Samstag", "Sonntag"]:
-            spiel.spielstatus = f"Wochenende ({wochentag}) - Keine Arbeit"
+            spiel.spielstatus = f"Es ist ({wochentag}) Hoch die Hände, Wochenende!!! - Die Elfen haben frei!"
         else:
             spiel.spielstatus = f"Laeuft ({wochentag})"
             simuliere_tagesablauf(spiel)
@@ -168,20 +174,30 @@ def automatischer_ablauf(spiel):
             break
 
         # Niederlagenprüfung
-        if spiel.aktueller_tag >= spiel.max_tag:
-            spiel.spielstatus = "beendet"
-            break
+        with lock:
+            if spiel.aktueller_tag >= spiel.max_tag:
+                spiel.spielstatus = "beendet"
+                break
 
         # Bestimme die Wartezeit basierend auf dem Modus
-        # Modus "laeuft" (1) = 60 Sekunden (1 Min) pro Tag
-        # Modus "schnell" (3) = 5 Sekunden pro Tag
-        wartezeit = 60.0 if spiel.spielstatus.startswith("Laeuft") or spiel.spielstatus.startswith("Wochenende") else 5.0
-        
+        # modus "laeuft" (1) = 60 Sekunden (1 Min) pro Tag
+        # modus "schnell" (3) = 5 Sekunden pro Tag
+        # wartezeit = 60.0 if spiel.spielstatus.startswith("Laeuft") or spiel.spielstatus.startswith("Wochenende") else 5.0
+        with lock:
+            if modus == "(schnell)":
+                wartezeit = 5.0
+            else:
+                wartezeit = 60.0
         # Wir teilen die Wartezeit in kleine Intervalle auf, damit Pausen oder Moduswechsel sofort greifen
         verstrichen = 0.0
         while verstrichen < wartezeit:
-            if spiel.spielstatus == "pausiert" or spiel.spielstatus in ["beendet", "Gewonnen"]:
+            if spiel.spielstatus == "pausiert":
+                time.sleep(0.1)
+                print("Zum vortfahren bitte Leertaste drücken")
+                keyboard.wait("space")
+            if spiel.spielstatus in ["beendet", "Gewonnen"]:
                 break
+
             # Falls der Benutzer in der Zwischenzeit auf Schnellmodus gewechselt hat
             aktuelle_zielzeit = 60.0 if "Laeuft" in spiel.spielstatus or "Wochenende" in spiel.spielstatus else 5.0
             if wartezeit != aktuelle_zielzeit:
@@ -192,6 +208,10 @@ def automatischer_ablauf(spiel):
 
         if spiel.spielstatus not in ["pausiert", "beendet", "Gewonnen"]:
             spiel.aktueller_tag += 1
+
+letzter_tag = None
+letzter_status = None
+modus = "(Normal)"
 
 def main():
     daten = lade_daten_aus_json("elfen_geschenke.json")
@@ -239,37 +259,59 @@ def main():
     # Starte den automatischen Ablauf in einem Hintergrund-Thread
     simulations_thread = threading.Thread(target=automatischer_ablauf, args=(spiel,), daemon=True)
     simulations_thread.start()
-
+    
+    global letzter_tag
+    global letzter_status
+    global modus
     # Hauptschleife für die interaktive Konsolensteuerung
     while spiel.spielstatus not in ["beendet", "Gewonnen"]:
-        zeige_benutzeroberfläche(spiel)
+        with lock:
+            if spiel.aktueller_tag != letzter_tag or spiel.spielstatus != letzter_status:
+                os.system("cls")
+                zeige_benutzeroberfläche(spiel)
+                letzter_tag = spiel.aktueller_tag
+                letzter_status = spiel.spielstatus 
 
-        try:
-            wahl = input("\nDeine Wahl (1-4): ")
-            wahl_int = int(wahl)
-            
-            if wahl_int == 1:
-                spiel.spielstatus = "Laeuft (Normal)"
-                print("\n[INFO] Normaler Modus aktiv: 1 Tag = 1 Minute.")
-            elif wahl_int == 2:
-                spiel.spielstatus = "pausiert"
-                print("\n[INFO] Spiel pausiert! Die Zeit ist eingefroren.")
-            elif wahl_int == 3:
-                spiel.spielstatus = "schnell"
-                print("\n[INFO] Schnelldurchlauf aktiv: 1 Tag = 5 Sekunden.")
-            elif wahl_int == 4:
-                spiel.spielstatus = "beendet"
-                print("\nProgramm wurde beendet. Frohe Weihnachten!")
-                break
-            else:
-                print("\n[FEHLER] Bitte wähle eine Zahl zwischen 1 und 4!")
-            
-            time.sleep(0.8)
-        except ValueError:
-            print("\n[FEHLER] Ungültige Eingabe! Bitte gib nur Ziffern von 1 bis 4 ein.")
-            time.sleep(1.0)
+            if msvcrt.kbhit() == True:
+                taste = msvcrt.getwch()
+
+                try:
+                    wahl_int = int(taste)
+                    
+                    if wahl_int == 1:
+                        #with lock:
+                            modus = "(Normal)"
+                            spiel.spielstatus = "Laeuft (Normal)"
+                            letzter_status = None
+                            print("\n[INFO] Normaler Modus aktiv: 1 Tag = 1 Minute.")
+                    elif wahl_int == 2:
+                        #with lock:
+                            spiel.spielstatus = "pausiert"
+                            letzter_status = None
+                            print("\n[INFO] Spiel pausiert! Die Zeit ist eingefroren.")
+                    elif wahl_int == 3:
+                        #with lock:
+                            modus = "(schnell)"
+                            spiel.spielstatus = "Laeuft (schnell)"
+                            print("\n[INFO] Schnelldurchlauf aktiv: 1 Tag = 5 Sekunden.")
+                            letzter_status = None
+                    elif wahl_int == 4:
+                        #with lock:
+                            spiel.spielstatus = "beendet"
+                            print("\nProgramm wurde beendet. Frohe Weihnachten!")
+                            break
+                    else:
+                        print("\n[FEHLER] Bitte wähle eine Zahl zwischen 1 und 4!")
+                    
+                    time.sleep(0.8)
+                except ValueError:
+                    print("\n[FEHLER] Ungültige Eingabe! Bitte gib nur Ziffern von 1 bis 4 ein.")
+                    time.sleep(1.0)
+                
+    time.sleep(0.5)
 
     # Abschlussmeldung bei Sieg oder Niederlage
+
     zeige_benutzeroberfläche(spiel)
     if spiel.spielstatus == "Gewonnen":
         print(f"\nGEWONNEN! Alle Geschenke wurden bis zum {hole_kalender_datum(spiel.aktueller_tag)} ausgeliefert!")
