@@ -30,7 +30,7 @@ class spiel:
 def simuliere_tagesablauf(spiel):
     arbeitsstunden_pro_tag = 8.0
 
-# Prüft ob ein Elf an aktuellen tag schon karnk ist
+# Prüft ob ein Elf an aktuellen tag schon krank ist
     elf_bereits_krank_diesn-tag = False
     # Elfen krankheit
     for elf in spiel.elfen:
@@ -143,5 +143,9 @@ def simuliere_tagesablauf(spiel):
                 # Strafzettel ist damit beglichen/abgegolten
                 spiel.strafzettel_tag = None
                 spiel.strafzettel_ignoriert = False
+            if vergangene_tage == 2 or 3:
+                print("Glück gehabt, Der Weihnachtsman wurde nicht erwischt. Dafür erhöht sich die strafe")
+            if vergangene_tage == 4:
+                print("Glück gehabt, Der Weihanchtsmann wurde noch nicht erwischt. Die höhe der Strafe wird ab hier nicht mehr steigen")
             else:
-                print(f"\n Glück gehabt Der Weihnachtsmann nicht erwischt dafür steigt aber die Konsequenz wenn er erwischt wird")
+                print("")
