@@ -6,7 +6,6 @@ import threading
 import classes
 from prettytable import PrettyTable
 import msvcrt
-import keyboard
 import os
 
 lock = threading.Lock()
@@ -153,25 +152,31 @@ def automatischer_ablauf(spiel):
     global modus
     """Hintergrund-Thread, der die Simulation abhängig vom Status steuert (Normal, Schnell, Pause)."""
     while spiel.spielstatus not in ["beendet", "Gewonnen"]:
-        
-        # Wenn pausiert, wird die Zeit eingefroren (Warte-Schleife)
         with lock:
             if spiel.spielstatus == "pausiert":
-                time.sleep(0.5)
-                continue
+                pausiert = True
+            else:
+                pausiert = False
+
+        if pausiert:
+            time.sleep(0.1)
+            continue
 
         # Wochentag prüfen
         wochentag = get_weekday_by_date(spiel.aktueller_tag)
         if wochentag in ["Samstag", "Sonntag"]:
-            spiel.spielstatus = f"Es ist ({wochentag}) Hoch die Hände, Wochenende!!! - Die Elfen haben frei!"
+            with lock:
+                spiel.spielstatus = f"Wochenende ({wochentag}) - Die Elfen haben frei"
         else:
-            spiel.spielstatus = f"Laeuft ({wochentag})"
+            with lock:
+                spiel.spielstatus = f"Laeuft ({wochentag})"
             simuliere_tagesablauf(spiel)
 
         # Siegprüfung
         if all(g.geschenk_status == "ausgeliefert" for g in spiel.geschenke):
-            spiel.spielstatus = "Gewonnen"
-            break
+            with lock:
+                spiel.spielstatus = "Gewonnen"
+                break
 
         # Niederlagenprüfung
         with lock:
@@ -179,35 +184,35 @@ def automatischer_ablauf(spiel):
                 spiel.spielstatus = "beendet"
                 break
 
-        # Bestimme die Wartezeit basierend auf dem Modus
-        # modus "laeuft" (1) = 60 Sekunden (1 Min) pro Tag
-        # modus "schnell" (3) = 5 Sekunden pro Tag
-        # wartezeit = 60.0 if spiel.spielstatus.startswith("Laeuft") or spiel.spielstatus.startswith("Wochenende") else 5.0
         with lock:
             if modus == "(schnell)":
                 wartezeit = 5.0
             else:
                 wartezeit = 60.0
-        # Wir teilen die Wartezeit in kleine Intervalle auf, damit Pausen oder Moduswechsel sofort greifen
+
         verstrichen = 0.0
         while verstrichen < wartezeit:
-            if spiel.spielstatus == "pausiert":
+            with lock:
+                if spiel.spielstatus == "pausiert":
+                    pausiert = True
+                else:
+                    pausiert = False
+                    aktuelle_wartezeit = 5.0 if modus == "(schnell)" else 60.0
+
+            if pausiert:
                 time.sleep(0.1)
-                print("Zum vortfahren bitte Leertaste drücken")
-                keyboard.wait("space")
+                continue
             if spiel.spielstatus in ["beendet", "Gewonnen"]:
                 break
-
-            # Falls der Benutzer in der Zwischenzeit auf Schnellmodus gewechselt hat
-            aktuelle_zielzeit = 60.0 if "Laeuft" in spiel.spielstatus or "Wochenende" in spiel.spielstatus else 5.0
-            if wartezeit != aktuelle_zielzeit:
+            if wartezeit != aktuelle_wartezeit:
                 break
             
             time.sleep(0.5)
             verstrichen += 0.5
 
-        if spiel.spielstatus not in ["pausiert", "beendet", "Gewonnen"]:
-            spiel.aktueller_tag += 1
+        with lock:
+            if spiel.spielstatus not in ["pausiert", "beendet", "Gewonnen"]:
+                spiel.aktueller_tag += 1
 
 letzter_tag = None
 letzter_status = None
@@ -279,27 +284,23 @@ def main():
                     wahl_int = int(taste)
                     
                     if wahl_int == 1:
-                        #with lock:
-                            modus = "(Normal)"
-                            spiel.spielstatus = "Laeuft (Normal)"
-                            letzter_status = None
-                            print("\n[INFO] Normaler Modus aktiv: 1 Tag = 1 Minute.")
+                        modus = "(Normal)"
+                        spiel.spielstatus = "Laeuft (Normal)"
+                        letzter_status = None
+                        print("\n[INFO] Normaler Modus aktiv: 1 Tag = 1 Minute.")
                     elif wahl_int == 2:
-                        #with lock:
-                            spiel.spielstatus = "pausiert"
-                            letzter_status = None
-                            print("\n[INFO] Spiel pausiert! Die Zeit ist eingefroren.")
+                        spiel.spielstatus = "pausiert"
+                        letzter_status = None
+                        print("\n[INFO] Spiel pausiert! Die Zeit ist eingefroren.")
                     elif wahl_int == 3:
-                        #with lock:
-                            modus = "(schnell)"
-                            spiel.spielstatus = "Laeuft (schnell)"
-                            print("\n[INFO] Schnelldurchlauf aktiv: 1 Tag = 5 Sekunden.")
-                            letzter_status = None
+                        modus = "(schnell)"
+                        spiel.spielstatus = "Laeuft (schnell)"
+                        print("\n[INFO] Schnelldurchlauf aktiv: 1 Tag = 5 Sekunden.")
+                        letzter_status = None
                     elif wahl_int == 4:
-                        #with lock:
-                            spiel.spielstatus = "beendet"
-                            print("\nProgramm wurde beendet. Frohe Weihnachten!")
-                            break
+                        spiel.spielstatus = "beendet"
+                        print("\nProgramm wurde beendet. Frohe Weihnachten!")
+                        break
                     else:
                         print("\n[FEHLER] Bitte wähle eine Zahl zwischen 1 und 4!")
                     
