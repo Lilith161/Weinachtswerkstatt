@@ -147,3 +147,5 @@ def simuliere_tagesablauf(spiel):
                 print("Glück gehabt, Der Weihnachtsman wurde nicht erwischt. Dafür erhöht sich die strafe")
             if vergangene_tage == 4:
                 print("Glück gehabt, Der Weihanchtsmann wurde noch nicht erwischt. Die höhe der Strafe wird ab hier nicht mehr steigen")
+            if vergangene_tage < 4:
+                print("Schon Wieder Glück gehabt bald wird der Weinahchtsmann ein Schwerverbrecher!")
