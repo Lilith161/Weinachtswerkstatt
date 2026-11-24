@@ -91,14 +91,28 @@ def zeige_benutzeroberfläche(spiel):
     print("-" * 50)
     print("SCHLITTEN-STATUS")
     print(f"Ladung: {spiel.schlitten.aktuelles_gewicht:.1f} / {spiel.schlitten.max_gewicht} kg  |  Verladene Geschenke: {len(spiel.schlitten.geladene_geschenke)}")
+    
     print("-" * 50)
     
     # --- 4. STEUERUNGSLEISTE ---
-    print("\n[STEUERUNG] (1) Normal [1 Min/Tag] | (2) Pause | (3) Schnell [5 Sek/Tag] | (4) Beenden")
+    if spiel.spielstatus == "pausiert":
+        print("\n[STEUERUNG] (1) Normal [1 Min/Tag] | (2) Pause | (3) Schnell [5 Sek/Tag] | (4) Beenden | (V) Vergangene Tage")
+    else:
+        print("\n[STEUERUNG] (1) Normal [1 Min/Tag] | (2) Pause | (3) Schnell [5 Sek/Tag] | (4) Beenden")
+
+def speichere_tagesprotokoll(spiel, ereignisse):
+    tagesereignis = {
+        "tag": spiel.aktueller_tag,
+        "datum": hole_kalender_datum(spiel.aktueller_tag),
+        "ereignisse": ereignisse
+    }
+    with lock:
+        spiel.tagesprotokoll.append(tagesereignis)
 
 def simuliere_tagesablauf(spiel):
     """Führt einen Tagesschritt aus: Elfen arbeiten, verpacken und laden."""
     arbeitsstunden_pro_tag = 8.0
+    ereignisse = []
     elf_bereits_krank_diesen_tag = False
 
     # Elfen-Krankheit
@@ -107,7 +121,9 @@ def simuliere_tagesablauf(spiel):
             elf.krankheits_tage_rest -= 1
             if elf.krankheits_tage_rest == 0:
                 elf.aktualisiere_elf_status("bereit")
-                print(f"\n [GESUND] {elf.name} ist wieder gesund und bereit für die Arbeit")
+                ereignis = f"{elf.name} ist wieder gesund und bereit für die Arbeit."
+                ereignisse.append(ereignis)
+                print(f"\n [GESUND] {ereignis}")
             continue
 
         if elf.elf_status == "krank" and elf.krankheits_tage_rest == 0:
@@ -140,11 +156,16 @@ def simuliere_tagesablauf(spiel):
                     f"und fällt {ausfall_tage} Tag(e) aus!"
                 )
 
+                krankheitsereignis = (
+                    f"{elf.name} ist krank geworden und fällt {ausfall_tage} Tag(e) aus."
+                )
                 if elf.ist_beschaeftigt():
                     g = elf.aktuelles_geschenk
                     g.zugewiesener_elf = None
                     g.aktualisiere_geschenk_status("nicht zugewiesen")
                     elf.aktuelles_geschenk = None
+                    krankheitsereignis += f" {g.name} wurde zurückgegeben."
+                ereignisse.append(krankheitsereignis)
 
     # Gesunde freie Elfen erhalten ein neues Geschenk.
     for elf in spiel.elfen:
@@ -169,16 +190,23 @@ def simuliere_tagesablauf(spiel):
             if g.fertigungszeit <= 0:
                 g.fertigungszeit = 0
                 g.aktualisiere_geschenk_status("Verpackt")
+                ereignisse.append(f"{g.name} wurde verpackt.")
                 elf.anzahl_produzierter_geschenke += 1
                 elf.aktuelles_geschenk = None
                 elf.aktualisiere_elf_status("bereit")
 
     # U-Haft: Die verbleibende Haftzeit wird um einen Arbeitstag reduziert.
     if spiel.u_haft_stunden_rest > 0:
+        haftstunden_vor_tag = spiel.u_haft_stunden_rest
         print(f"\n [U-HAFT] Der Weihnachtsmann sitzt im Knast und die Auslieferung ist Blockiert! Noch {spiel.u_haft_stunden_rest}Haft.")
         spiel.u_haft_stunden_rest -= arbeitsstunden_pro_tag
         if spiel.u_haft_stunden_rest < 0:
             spiel.u_haft_stunden_rest = 0.0
+        ereignisse.append(
+            f"U-Haft aktiv: {haftstunden_vor_tag:g} Stunden vor dem Arbeitstag, "
+            f"{spiel.u_haft_stunden_rest:g} Stunden verbleibend."
+        )
+        speichere_tagesprotokoll(spiel, ereignisse)
         return
 
     # Schlitten laden und ausliefern nur wenn nicht in U-haft
@@ -186,6 +214,7 @@ def simuliere_tagesablauf(spiel):
         if g.geschenk_status == "Verpackt":
             if spiel.schlitten.lade_geschenk(g):
                 g.aktualisiere_geschenk_status("verladen")
+                ereignisse.append(f"{g.name} wurde auf den Schlitten verladen.")
 
     noch_in_arbeit = any(
         g.geschenk_status in ["nicht zugewiesen", "zugewiesen", "in Produktion"]
@@ -200,6 +229,7 @@ def simuliere_tagesablauf(spiel):
         ):
             for g in spiel.schlitten.geladene_geschenke:
                 g.aktualisiere_geschenk_status("ausgeliefert")
+                ereignisse.append(f"{g.name} wurde ausgeliefert.")
 
             spiel.schlitten.starte_auslieferung()
 
@@ -209,12 +239,15 @@ def simuliere_tagesablauf(spiel):
 
         if vergangene_tage == 1:
             print(f"\n Polizei bittet den Weihnachtsmann, den Strafzettel zu zahlen...")
+            ereignisse.append("Die Polizei fordert den Weihnachtsmann auf, den Strafzettel zu bezahlen.")
             if random.choice([True, False]):
                 print("Er zahlt. Alles erledigt!")
+                ereignisse.append("Der Weihnachtsmann hat den Strafzettel bezahlt.")
                 spiel.strafzettel_tag = None
                 spiel.strafzettel_ignoriert = False
             else:
                 print("Er weigert sich zu zahlen!")
+                ereignisse.append("Der Weihnachtsmann weigert sich, den Strafzettel zu bezahlen.")
     
         elif vergangene_tage >= 2:
             erwischt = random.choice([True, False])
@@ -225,23 +258,33 @@ def simuliere_tagesablauf(spiel):
                 if vergangene_tage == 2:
                     print(f"\n der Weihnachtsmann wurde von der Polizei erwischt und ist in Haft gelandet für 16 Stunden")
                     spiel.u_haft_stunden_rest = 16.0
+                    ereignisse.append("Der Weihnachtsmann wurde erwischt und zu 16 Stunden U-Haft verurteilt.")
                         # 3 tage
                 elif vergangene_tage == 3:
                     print(f"\n der Weihnachtsmann wurde von der Polizei erwischt und ist in Haft gelandet für 2 Tage")
                     spiel.u_haft_stunden_rest = 24.0
+                    ereignisse.append("Der Weihnachtsmann wurde erwischt und zu 24 Stunden U-Haft verurteilt.")
                 else:   # 4 oder mehr Tage
                     print(f"\n der Weihnachtsmann wurde von der Polizei erwischt und ist in Haft gelandet für 2 Tage 8 stunden")
                     spiel.u_haft_stunden_rest = 32.0
+                    ereignisse.append("Der Weihnachtsmann wurde erwischt und zu 32 Stunden U-Haft verurteilt.")
                 
                 # Strafzettel ist damit beglichen/abgegolten
                 spiel.strafzettel_tag = None
                 spiel.strafzettel_ignoriert = False
-            if vergangene_tage in [2, 3]:
-                print("Glück gehabt, Der Weihnachtsman wurde nicht erwischt. Dafür erhöht sich die strafe")
-            if vergangene_tage == 4:
-                print("Glück gehabt, Der Weihanchtsmann wurde noch nicht erwischt. Die höhe der Strafe wird ab hier nicht mehr steigen")
-            if vergangene_tage > 4:
-                print("Schon Wieder Glück gehabt bald wird der Weinahchtsmann ein Schwerverbrecher!")
+            else:
+                ereignisse.append("Der Weihnachtsmann wurde nicht erwischt.")
+                if vergangene_tage in [2, 3]:
+                    print("Glück gehabt, Der Weihnachtsman wurde nicht erwischt. Dafür erhöht sich die strafe")
+                    ereignisse.append("Die Strafe für den ignorierten Strafzettel erhöht sich.")
+                elif vergangene_tage == 4:
+                    print("Glück gehabt, Der Weihanchtsmann wurde noch nicht erwischt. Die höhe der Strafe wird ab hier nicht mehr steigen")
+                    ereignisse.append("Die Strafe steigt nicht weiter, obwohl der Strafzettel noch offen ist.")
+                else:
+                    print("Schon Wieder Glück gehabt bald wird der Weinahchtsmann ein Schwerverbrecher!")
+                    ereignisse.append("Der Weihnachtsmann wurde erneut nicht erwischt.")
+
+    speichere_tagesprotokoll(spiel, ereignisse)
 
 def automatischer_ablauf(spiel):
     global modus
@@ -262,6 +305,10 @@ def automatischer_ablauf(spiel):
         if wochentag in ["Samstag", "Sonntag"]:
             with lock:
                 spiel.spielstatus = f"Wochenende ({wochentag}) - Die Elfen haben frei"
+            speichere_tagesprotokoll(
+                spiel,
+                [f"Wochenende ({wochentag}) - Die Elfen haben frei."]
+            )
         else:
             with lock:
                 spiel.spielstatus = f"Laeuft ({wochentag})"
@@ -355,8 +402,7 @@ def main():
         geschenke=geschenke,
         elfen=elfen,
         schlitten=schlitten,
-        spielstatus="Bereit",
-        tagesprotokoll=[]
+        spielstatus="Bereit"
     )
     spiel.initialisiere_spiel()
 
@@ -378,6 +424,24 @@ def main():
 
             if msvcrt.kbhit() == True:
                 taste = msvcrt.getwch()
+
+                if spiel.spielstatus == "pausiert" and taste.lower() == "v":
+                    os.system("cls")
+                    if spiel.tagesprotokoll:
+                        for eintrag in spiel.tagesprotokoll:
+                            print(f"\nTag {eintrag['tag']} - {eintrag['datum']}")
+                            if eintrag["ereignisse"]:
+                                for ereignis in eintrag["ereignisse"]:
+                                    print(f"  - {ereignis}")
+                            else:
+                                print("  Keine besonderen Ereignisse.")
+                    else:
+                        print("Es gibt noch kein Tagesprotokoll.")
+
+                    print("\nBeliebige Taste drücken, um zum Spiel zurückzukehren.")
+                    msvcrt.getwch()
+                    letzter_status = None
+                    continue
 
                 try:
                     wahl_int = int(taste)
