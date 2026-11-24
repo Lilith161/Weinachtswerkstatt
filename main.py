@@ -115,7 +115,7 @@ def simuliere_tagesablauf(spiel):
 
         if not elf_bereits_krank_diesen_tag and elf.elf_status != "krank":
             # Wahrscheinlichkeit, dass der Elf krank wird (15%)
-            if random.random() < 0.15:
+            if random.random() < 0.10:
                 elf_bereits_krank_diesen_tag = True
                 elf.aktualisiere_elf_status("krank")
 
@@ -316,8 +316,11 @@ modus = "(Normal)"
 def main():
     daten = lade_daten_aus_json("elfen_geschenke.json")
     
+    elfen_roh = daten["elfen"]
+    arbeiter_roh = random.sample(elfen_roh, min(3, len(elfen_roh)))
+    
     elfen = []
-    for e_data in daten["elfen"]:
+    for e_data in arbeiter_roh:
         elf = classes.elf(
             elf_id=e_data["elf_id"],
             name=e_data["name"],
@@ -352,7 +355,8 @@ def main():
         geschenke=geschenke,
         elfen=elfen,
         schlitten=schlitten,
-        spielstatus="Bereit"
+        spielstatus="Bereit",
+        tagesprotokoll=[]
     )
     spiel.initialisiere_spiel()
 

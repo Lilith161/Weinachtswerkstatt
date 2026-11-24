@@ -73,13 +73,14 @@ class schlitten:
         
 
 class spiel:
-    def __init__(self, aktueller_tag, max_tag, geschenke, elfen, schlitten, spielstatus):
+    def __init__(self, aktueller_tag, max_tag, geschenke, elfen, schlitten, spielstatus, tagesprotokoll):
         self.aktueller_tag = aktueller_tag
         self.max_tag = max_tag
         self.geschenke = geschenke
         self.elfen = elfen
         self.schlitten = schlitten
         self.spielstatus = spielstatus
+        self.tagesprotokoll = tagesprotokoll
 
         self.strafzettel_tag = None
         self.strafzettel_ignoriert = False
