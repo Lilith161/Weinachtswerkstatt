@@ -25,6 +25,8 @@ class elf:
         self.aktuelles_geschenk = aktuelles_geschenk 
         self.elf_status = elf_status
 
+        self.krankheits_tage_rest = 0
+
     def ist_beschaeftigt(self):
         return self.aktuelles_geschenk is not None
 
@@ -78,6 +80,10 @@ class spiel:
         self.elfen = elfen
         self.schlitten = schlitten
         self.spielstatus = spielstatus
+
+        self.strafzettel_tag = None
+        self.strafzettel_ignoriert = False
+        self.u_haft_stunden_rest = 0.0
 
     def initialisiere_spiel(self):
         self.aktueller_tag = 1
