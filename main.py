@@ -10,6 +10,23 @@ import os
 
 lock = threading.Lock()
 
+def tagesprotokoll_anzeigen(spiel):
+    os.system("cls")
+    if spiel.tagesprotokoll:
+        for eintrag in spiel.tagesprotokoll:
+            print(f"\nTag {eintrag['tag']} - {eintrag['datum']}")
+            if eintrag["ereignisse"]:
+                for ereignis in eintrag["ereignisse"]:
+                    print(f"  - {ereignis}")
+            else:
+                print("  Keine besonderen Ereignisse.")
+    else:
+        print("Es gibt noch kein Tagesprotokoll.")
+
+    print("\nBeliebige Taste drücken, um zum Spiel zurückzukehren.")
+    msvcrt.getwch()
+    letzter_status = None
+
 def lade_daten_aus_json(dateipfad):
     """Lädt Elfen- und Geschenkedaten aus einer JSON-Datei."""
     with open(dateipfad, "r", encoding="utf-8") as f:
@@ -48,9 +65,9 @@ def zeige_benutzeroberfläche(spiel):
     print("\n[ WUNSCHLISTE ]")
     tabelle_wunschliste = PrettyTable()
     tabelle_wunschliste.fieldnames = ["ID", "Wunschliste", "Gewicht", "Kategorie", "Status", "Elf"]
-    tabelle_wunschliste.align["Wunschliste"] = "l"
-    tabelle_wunschliste.align["Kategorie"] = "l"
-    tabelle_wunschliste.align["Status"] = "l"
+    tabelle_wunschliste.align["Wunschliste"] = "1"
+    tabelle_wunschliste.align["Kategorie"] = "1"
+    tabelle_wunschliste.align["Status"] = "1"
     
     for g in spiel.geschenke:
         if hasattr(g.zugewiesener_elf, 'name') and g.zugewiesener_elf:
@@ -426,21 +443,7 @@ def main():
                 taste = msvcrt.getwch()
 
                 if spiel.spielstatus == "pausiert" and taste.lower() == "v":
-                    os.system("cls")
-                    if spiel.tagesprotokoll:
-                        for eintrag in spiel.tagesprotokoll:
-                            print(f"\nTag {eintrag['tag']} - {eintrag['datum']}")
-                            if eintrag["ereignisse"]:
-                                for ereignis in eintrag["ereignisse"]:
-                                    print(f"  - {ereignis}")
-                            else:
-                                print("  Keine besonderen Ereignisse.")
-                    else:
-                        print("Es gibt noch kein Tagesprotokoll.")
-
-                    print("\nBeliebige Taste drücken, um zum Spiel zurückzukehren.")
-                    msvcrt.getwch()
-                    letzter_status = None
+                    tagesprotokoll_anzeigen(spiel)
                     continue
 
                 try:
@@ -479,8 +482,16 @@ def main():
     zeige_benutzeroberfläche(spiel)
     if spiel.spielstatus == "Gewonnen":
         print(f"\nGEWONNEN! Alle Geschenke wurden bis zum {hole_kalender_datum(spiel.aktueller_tag)} ausgeliefert!")
+        schlusswahl = input("Alle ereignisse anzeigen? (V) oder beenden? (4)")
+        if schlusswahl == "v" or "V":
+            tagesprotokoll_anzeigen(spiel)
+        
+        
     elif spiel.spielstatus == "beendet" and spiel.aktueller_tag >= spiel.max_tag:
         print("\nZEIT ABGELAUFEN: Nicht alle Geschenke konnten rechtzeitig ausgeliefert werden.")
+        schlusswahl = input("Alle ereignisse anzeigen? (V) oder beenden? (4)")
+        if schlusswahl == "v" or "V":
+            tagesprotokoll_anzeigen(spiel)
 
 if __name__ == "__main__":
     main()
