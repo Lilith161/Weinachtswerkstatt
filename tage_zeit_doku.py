@@ -1,24 +1,29 @@
 import calendar
 import msvcrt
 import os
-
+from synchronisierung import lock
 
 def tagesprotokoll_anzeigen(spiel):
-    os.system("cls")
-    if spiel.tagesprotokoll:
-        for eintrag in spiel.tagesprotokoll:
-            print(f"\nTag {eintrag['tag']} - {eintrag['datum']}")
-            if eintrag["ereignisse"]:
-                for ereignis in eintrag["ereignisse"]:
-                    print(f"  - {ereignis}")
+    with lock:
+            os.system("cls")
+            if spiel.tagesprotokoll:
+                for eintrag in spiel.tagesprotokoll:
+                    print(f"\nTag {eintrag['tag']} - {eintrag['datum']}")
+                    if eintrag["ereignisse"]:
+                        for ereignis in eintrag["ereignisse"]:
+                            print(f"  - {ereignis}")
+                    else:
+                        print("  Keine besonderen Ereignisse.")
             else:
-                print("  Keine besonderen Ereignisse.")
-    else:
-        print("Es gibt noch kein Tagesprotokoll.")
+                print("Es gibt noch kein Tagesprotokoll.")
 
     print("\nBeliebige Taste drücken, um zum Spiel zurückzukehren.")
     msvcrt.getwch()
-    letzter_status = None
+
+def tagprot_anz(spiel):
+    schlusswahl = input("Alle ereignisse anzeigen? (V) oder beenden? (4)")
+    if schlusswahl.lower() == "v":
+        tagesprotokoll_anzeigen(spiel)
 
 def parse_zeit(zeit_str):
     rein = zeit_str.lower().replace("h", "").strip().replace(",", ".")

@@ -1,7 +1,12 @@
-import tage_zeit
+import tage_zeit_doku
 import random
+from synchronisierung import lock
 
 def simuliere_tagesablauf(spiel):
+    with lock:
+        _simuliere_tagesablauf(spiel)
+
+def _simuliere_tagesablauf(spiel):
     """Führt einen Tagesschritt aus: Elfen arbeiten, verpacken und laden."""
     arbeitsstunden_pro_tag = 8.0
     ereignisse = []
@@ -98,7 +103,7 @@ def simuliere_tagesablauf(spiel):
             f"U-Haft aktiv: {haftstunden_vor_tag:g} Stunden vor dem Arbeitstag, "
             f"{spiel.u_haft_stunden_rest:g} Stunden verbleibend."
         )
-        tage_zeit.speichere_tagesprotokoll(spiel, ereignisse)
+        tage_zeit_doku.speichere_tagesprotokoll(spiel, ereignisse)
         return
 
     # Schlitten laden und ausliefern nur wenn nicht in U-haft
@@ -176,4 +181,4 @@ def simuliere_tagesablauf(spiel):
                     print("Schon Wieder Glück gehabt bald wird der Weinahchtsmann ein Schwerverbrecher!")
                     ereignisse.append("Der Weihnachtsmann wurde erneut nicht erwischt.")
 
-    tage_zeit.speichere_tagesprotokoll(spiel, ereignisse)
+    tage_zeit_doku.speichere_tagesprotokoll(spiel, ereignisse)

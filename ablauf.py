@@ -1,6 +1,9 @@
-import tage_zeit
+import tage_zeit_doku
 import time
 import simulation
+from synchronisierung import lock
+
+modus = "(Normal)"
 
 def automatischer_ablauf(spiel):
     global modus
@@ -17,11 +20,11 @@ def automatischer_ablauf(spiel):
             continue
 
         # Wochentag prüfen
-        wochentag = tage_zeit.get_weekday_by_date(spiel.aktueller_tag)
+        wochentag = tage_zeit_doku.get_weekday_by_date(spiel.aktueller_tag)
         if wochentag in ["Samstag", "Sonntag"]:
             with lock:
                 spiel.spielstatus = f"Wochenende ({wochentag}) - Die Elfen haben frei"
-            tage_zeit.speichere_tagesprotokoll(
+            tage_zeit_doku.speichere_tagesprotokoll(
                 spiel,
                 [f"Wochenende ({wochentag}) - Die Elfen haben frei."]
             )
@@ -44,9 +47,9 @@ def automatischer_ablauf(spiel):
 
         with lock:
             if modus == "(schnell)":
-                wartezeit = 5.0
+                wartezeit = 1.0
             else:
-                wartezeit = 60.0
+                wartezeit = 10.0
 
         verstrichen = 0.0
         while verstrichen < wartezeit:
@@ -55,7 +58,7 @@ def automatischer_ablauf(spiel):
                     pausiert = True
                 else:
                     pausiert = False
-                    aktuelle_wartezeit = 5.0 if modus == "(schnell)" else 60.0
+                    aktuelle_wartezeit = 1.0 if modus == "(schnell)" else 10.0
 
             if pausiert:
                 time.sleep(0.1)

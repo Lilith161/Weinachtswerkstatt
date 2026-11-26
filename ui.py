@@ -1,12 +1,12 @@
 from prettytable import PrettyTable
-import tage_zeit
+import tage_zeit_doku
 
 def zeige_benutzeroberfläche(spiel):
     """Erstellt die Konsolen-UI mit PrettyTable."""
     print("\n" + "=" * 65)
     print(f"|{'SANTAS WEIHNACHTSWERKSTATT-MANAGER 2026':^63}|")
     print("-" * 65)
-    datum_str = tage_zeit.hole_kalender_datum(spiel.aktueller_tag)
+    datum_str = tage_zeit_doku.hole_kalender_datum(spiel.aktueller_tag)
     print(f"| Aktueller Spieltag: Tag {spiel.aktueller_tag} von {spiel.max_tag} ({datum_str})".ljust(64) + "|")
     print(f"| System-Status: {spiel.spielstatus}".ljust(64) + "|")
     print("=" * 65)
